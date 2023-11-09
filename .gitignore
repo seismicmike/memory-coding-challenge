@@ -46,8 +46,6 @@
 /web/profiles/README.txt
 /web/sites/README.txt
 /web/themes/README.txt
-# Ignore database backup/dump folder
-/database_backups/
 # Ignore SimpleTest multi-site environment.
 /web/sites/simpletest
 # Ignore Backstop images and reports

@@ -96,7 +96,17 @@ GET /code-challenge/card-grid?rows=10&columns=6
 
 ### Local Environment
 
-The local environment for this application was created using [Lando](https://devwithlando.io/download/). Follow the instructions to install Lando and then run ```lando start``` to start up the container. Once started, the application will become available at https://memory.lndo.site.
+The local environment for this application was created using [Lando](https://devwithlando.io/download/). Follow the instructions to install Lando and then run ```lando start``` to start up the container. Once started, the application will become available at https://memory.lndo.site. To deploy the setup of the custom module and endpoint, import a database that should be provided externally. Download the database file, unzip it and place it in the database_backups folder. Then use lando db-import to import it.
+
+Assuming that you are on a Mac and your code is in your ~/code directory under the folder "memory".
+
+```shell
+$ cd ~/code/memory/database_backups
+$ mv ~/Downloads/setup.sql.gz .
+$ gunzip setup.sql.gz
+$ cd ..
+$ lando db-import database_backups/setup.sql
+```
 
 ### The API Endpoint
 

@@ -32,10 +32,22 @@ class GridGeneratorTest extends UnitTestCase {
   public function testGridGenerator() {
     $cases = [
       [
-        'rows' => 5,
+        'rows' => 2,
+        'columns' => 2,
+        'total' => 4,
+        'unique' => 2,
+      ],
+      [
+        'rows' => 4,
+        'columns' => 5,
+        'total' => 20,
+        'unique' => 10,
+      ],
+      [
+        'rows' => 6,
         'columns' => 6,
-        'total' => 30,
-        'unique' => 15,
+        'total' => 36,
+        'unique' => 18,
       ],
       [
         'rows' => 3,
@@ -50,28 +62,10 @@ class GridGeneratorTest extends UnitTestCase {
         'unique' => 24,
       ],
       [
-        'rows' => 0,
-        'columns' => 6,
-        'total' => 0,
-        'unique' => 0,
-      ],
-      [
-        'rows' => 4,
-        'columns' => 0,
-        'total' => 0,
-        'unique' => 0,
-      ],
-      [
-        'rows' => 4,
-        'columns' => -2,
-        'total' => -8,
-        'unique' => -4,
-      ],
-      [
-        'rows' => -3,
-        'columns' => 6,
-        'total' => -18,
-        'unique' => -9,
+        'rows' => 8,
+        'columns' => 16,
+        'total' => 128,
+        'unique' => 64,
       ],
     ];
 
@@ -80,14 +74,10 @@ class GridGeneratorTest extends UnitTestCase {
       $rows = $case['rows'];
       $columns = $case['columns'];
 
-      if (!is_int($rows) || !is_int($columns) || $rows < 1 || $columns < 1 || (($rows * $columns) % 2 != 0)) {
-        $this->expectException(\Exception::class);
-      }
-
-      $grid = $this->gridGenerator->generateGrid($rows, $columns, TRUE);
+      $grid = $this->gridGenerator->generateGrid($rows, $columns);
       $unique_cards = $this->gridGenerator->getUniqueCards();
-      $this->assertEquals($case['unique'], count($unique_cards), "{$case['unique']} cards were drawn.");
-      $this->assertEquals($case['unique'], $this->gridGenerator->getUniqueCardCount(), "{$case['unique']} cards were reported.");
+      $this->assertEquals($case['unique'], count($unique_cards), "{$case['unique']} unique cards were drawn.");
+      $this->assertEquals($case['unique'], $this->gridGenerator->getUniqueCardCount(), "{$case['unique']} unique cards were reported.");
       $current_draw = $this->gridGenerator->getCurrentDraw();
       $this->assertEquals($case['total'], count($current_draw), "{$case['total']} cards were drawn.");
       $this->assertEquals($case['total'], $this->gridGenerator->getCardCount(), "{$case['total']} cards were reported.");

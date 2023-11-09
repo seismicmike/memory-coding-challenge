@@ -3,7 +3,15 @@
 This application was developed as a coding challenge.
 
 * [Requirements](#requirements)
+  * [Specifications](#specifications)
+  * [Sample requests and responses](#sample-requests-and-responses)
+  * [Sample validation errors](#sample-validation-errors)
 * [Solution](#solution)
+  * [Local environment](#local-environment)
+  * [Drupal](#drupal)
+  * [The API Endpoint](#the-api-endpoint)
+  * [Unit Testing](#unit-testing)
+  * [Code Quality](#code-quality)
 
 ## Requirements
 
@@ -12,7 +20,7 @@ The following were the requirements for this challenge:
 * Set up a local environment for development and testing
 * Submit code as either a git repository or a zip folder
 * Generate PHPUnit tests
-* Generate a swagger file
+* Generate a swagger file with OpenAPI Spec 3.0
 * Create an API end point that produces a magic memory game according to the specifications
 
 ### Specifications
@@ -108,11 +116,53 @@ $ cd ..
 $ lando db-import database_backups/setup.sql
 ```
 
+### Drupal
+
+This application was developed in Drupal. However since it was developed in November of 2023 when Drupal 9 has reached End of Life, I have chosen Drupal 10 instead of 8 or 9.
+
 ### The API Endpoint
 
 The endpoint is provided by a custom module called Memory Game (machine name: memory_game). The module contains:
-* A controller that provides the route /code-challenge/card-grid and returns the API response
-* A service class that provides validation checking of the input
-* A service class that handles the logic of generating the grid
+* A [controller](web/modules/custom/memory_game/src/Controller/MemoryGameController.php) that provides the route /code-challenge/card-grid and returns the API response
+* A [validator service class](web/modules/custom/memory_game/src/RequestValidator.php) that provides validation checking of the input
+* A [GridGenerator](web/modules/custom/memory_game/src/GridGenerator.php) class that handles the logic of generating the grid
 
-API responses go through the following 
+API responses go through the following algorithm:
+1. We initialize an error response code and response object so we have that to fall back on.
+1. We pass the request to the validator service class to see if it is valid.
+1. The validator checks all conditions and returns TRUE only if all conditions pass.
+   * If it fails, it stores an error message we can use for our response message.
+1. If validation fails, we update the message to reflect what the error was.
+1. If validation succeeds, we generate a grid and update the response code and response object to output the data.
+1. Then we return the response as a JsonResponse object with a status code of 200 or 400 depending on whether validation succeeded.
+
+See the swagger file in [json](docs/openapi.json) or [yaml](docs/openapi.json) for more detail on the API.
+
+
+### Unit Testing
+
+The validation service class may be tested using the [RequestValidatorTest](web/modules/custom/memory_game/tests/src/Unit/RequestValidatorTest.php) class.
+
+To execute only this test, run
+```
+php vendor/bin/php web/modules/custom/memory_game/tests/src/Unit/RequestValidatorTest.php
+```
+
+The grid generator class may be tested using the [GridGeneratorTest](web/modules/custom/memory_game/tests/src/Unit/GridGeneratorTest.php)
+
+To execute only this test, run
+```
+php vendor/bin/php web/modules/custom/memory_game/tests/src/Unit/GridGeneratorTest.php
+```
+
+### Code Quality
+
+I have enforced code quality using [grumphp](https://github.com/phpro/grumphp) to scan the project with PHPCS and PHPStan. PHPCS uses both the Drupal and DrupalPractice coding standards. Grumphp registers its checks as a git pre-commit hook to prevent committing bad code. I've also provided tooling to the lando container to enable easily running its checks.
+
+To run grumphp directly, run:
+
+```
+lando grumphp
+```
+
+Grumphp can easily be set up in github using github actions to lint the code prior to merging pull requests if it is so desired.

@@ -1,0 +1,5 @@
+name: Memory Game
+type: module
+description: Creates an API Endpoint to provide a memory game.
+package: Custom
+core_version_requirement: ^9 || ^10

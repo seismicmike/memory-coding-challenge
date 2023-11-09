@@ -25,12 +25,12 @@ grumphp:
         - scripts/
         - libraries/
         - scripts/s
-        - docroot/autoload.php
-        - docroot/core
-        - docroot/modules/contrib
-        - docroot/themes/contrib
-        - docroot/profiles
-        - docroot/sites/default
+        - web/autoload.php
+        - web/core
+        - web/modules/contrib
+        - web/themes/contrib
+        - web/profiles
+        - web/sites/default
         - vendor/
         - load.environment.php
       triggered_by:

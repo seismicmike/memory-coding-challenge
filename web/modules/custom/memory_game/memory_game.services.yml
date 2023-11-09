@@ -1,0 +1,4 @@
+services:
+  memory_game.request_validator:
+    class: Drupal\memory_game\RequestValidator
+    arguments: ['@request_stack']

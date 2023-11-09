@@ -123,12 +123,6 @@ class GridGenerator {
    *   The new draw of cards.
    */
   public function drawCards(int $numCards): array {
-    // @todo We're preventing this with validation, but we should also make sure
-    //   to handle this error gracefully.
-    if ($numCards % 2 != 0) {
-      throw new \Exception("There is not an even number of cards. Generating a grid would result in a card with no match.");
-    }
-
     // Reset the unique cards to be the full deck.
     $this->resetDraw();
 
@@ -183,37 +177,25 @@ class GridGenerator {
    * @param int $columns
    *   The number of columns. Must be a positive integer. $rows * $columns must
    *   be a positive even integer.
-   * @param bool $resetDraw
-   *   Whether to reset the draw when generating the grid. If specified, a fresh
-   *   draw with the specified number of cards will be generated. Otherwise the
-   *   current draw will be used. Be ware as this can created unexpected
-   *   results. If, for instance, you create a grid with 4 rows and 6 columns,
-   *   you can then create a grid with 6 rows and 4 columns with no problem
-   *   because there are the same number of cards. But if you generate a grid
-   *   with 5 rows and 4 columns, you can't  then use the same deck to generate
-   *   a grid with 5 rows and 6 columns.
    *
    * @return array
    *   A 2 dimensional array with the specified number of rows and cards
    *   arraying a grid of cards. Each card will have exactly one match in the
    *   grid.
    */
-  public function generateGrid(int $rows, int $columns, bool $resetDraw = FALSE): array {
-    if ($rows <= 0) {
-      throw new \Exception("Invalid number of rows specified. Please indicate a positive integer for the number of rows.");
-    }
-
-    if ($columns <= 0) {
-      throw new \Exception("Invalid number of columns specified. Please indicate a positive integer for the number of columns.");
-    }
-
-    if ($resetDraw || $this->currentDraw === NULL) {
-      $this->drawCards($rows * $columns);
-    }
+  public function generateGrid(int $rows, int $columns): array {
+    // It would probably be good to do sanity checks here to make sure we have
+    // a valid set of rows and columns so things don't get really strange, but
+    // since we've got a validation layer in front of this, it's find for this
+    // particular use case. However, in a real world application, we shouldn't
+    // assume we'll always have that validation layer to protect us, so error
+    // handling would be advised here.
+    //
+    // Draw a new deck of cards.
+    $this->drawCards($rows * $columns);
 
     // Arrange the cards in a grid.
     $grid = [];
-
     for ($i = 0; $i < $rows; $i++) {
       // Offset the slice by the number of items in each row.
       $offset = $i * $columns;

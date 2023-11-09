@@ -1,0 +1,179 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Memory Game - OpenAPI 3.0",
+    "description": "This API generates a memory game by providing a randomized grid of cards filling a specified number of rows and columns. Each card in the grid will have exactly one match and will be in a random location. The data from this API can be used by a front-end framework to generate the user interface for a matching game.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/coding-challenge/card-grid": {
+      "get": {
+        "summary": "Generate a Card Grid",
+        "description": "Generate a random grid of cards.",
+        "operationId": "generateCardGrid",
+        "parameters": [
+          {
+            "name": "rows",
+            "in": "query",
+            "description": "The number of rows to include in the grid (between 1 and 6).",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            }
+          },
+          {
+            "name": "columns",
+            "in": "query",
+            "description": "The number of columns to include in the grid  (between 1 and 6).",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardGrid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response to invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CardGrid": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "example": true
+              },
+              "cardCount": {
+                "type": "integer",
+                "example": 24
+              },
+              "uniqueCardCount": {
+                "type": "integer",
+                "example": 12
+              },
+              "uniqueCards": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "S",
+                  "B",
+                  "R",
+                  "A",
+                  "N",
+                  "W",
+                  "Q",
+                  "F",
+                  "V",
+                  "L",
+                  "J",
+                  "X"
+                ]
+              }
+            }
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "cards": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": [
+                  [
+                    "R",
+                    "R",
+                    "Q",
+                    "Q",
+                    "L",
+                    "S"
+                  ],
+                  [
+                    "X",
+                    "N",
+                    "A",
+                    "V",
+                    "J",
+                    "A"
+                  ],
+                  [
+                    "B",
+                    "W",
+                    "X",
+                    "L",
+                    "W",
+                    "N"
+                  ],
+                  [
+                    "V",
+                    "F",
+                    "S",
+                    "J",
+                    "B",
+                    "F"
+                  ]
+                ]
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "example": false
+              },
+              "message": {
+                "type": "string",
+                "example": "Row count is greater than 6"
+              }
+            }
+          },
+          "data": {
+            "type": "object",
+            "example": {}
+          }
+        }
+      }
+    }
+  }
+}

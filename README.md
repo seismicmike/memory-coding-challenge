@@ -41,14 +41,14 @@ and columns as the query parameter values.
 GET /code-challenge/card-grid?rows=2&columns=2
 ```json
 {
-  meta: {
-    success: true,
-    cardCount: 4,
-    uniqueCardCount: 2,
-    uniqueCards: ["D", "G"]
+  "meta": {
+    "success": true,
+    "cardCount": 4,
+    "uniqueCardCount": 2,
+    "uniqueCards": ["D", "G"]
   },
-  data: {
-    cards: [
+  "data": {
+    "cards": [
       ["G", "D"],
       ["D", "G"]
     ]
@@ -59,14 +59,14 @@ GET /code-challenge/card-grid?rows=2&columns=2
 GET /code-challenge/card-grid?rows=4&columns=6
 ```json
 {
-  meta: {
-    success: true,
-    cardCount: 24,
-    uniqueCardCount: 12,
-    uniqueCards: ["S","B","R","A","N","W","Q","F","V","L","J","X"]
+  "meta": {
+    "success": true,
+    "cardCount": 24,
+    "uniqueCardCount": 12,
+    "uniqueCards": ["S","B","R","A","N","W","Q","F","V","L","J","X"]
   },
-  data: {
-    cards: [
+  "data": {
+    "cards": [
       ["R","R","Q","Q","L","S"],
       ["X","N","A","V","J","A"],
       ["B","W","X","L","W","N"],
@@ -81,22 +81,22 @@ GET /code-challenge/card-grid?rows=4&columns=6
 GET /code-challenge/card-grid?rows=3&columns=5
 ```json
 {
-  meta: {
-    success: false,
-    message: "Either `rows` or `columns` needs to be an even number."
+  "meta": {
+    "success": false,
+    "message": "Either `rows` or `columns` needs to be an even number."
   },
-  data: {}
+  "data": {}
 }
 ```
 
 GET /code-challenge/card-grid?rows=10&columns=6
 ```json
 {
-  meta: {
-    success: false,
-    message: "Row count is greater than 6"
+  "meta": {
+    "success": false,
+    "message": "Row count is greater than 6"
   },
-  data: {}
+  "data": {}
 }
 ```
 

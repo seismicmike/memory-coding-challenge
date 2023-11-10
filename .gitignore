@@ -9,7 +9,6 @@
 # Ignore the simplesaml symlink that composer will create.
 /web/simplesaml
 # Ignore sensitive and environment-specific information
-/web/sites/default/settings.php
 /web/sites/*/settings.ddev.php
 /web/sites/*/settings.docksal.php
 /web/sites/*/settings.local.php
@@ -22,7 +21,6 @@
 # Ignore Drupal scaffold files
 /.editorconfig
 /.gitattributes
-/web/sites/development.services.yml
 /web/sites/example.settings.docksal.php
 /web/sites/example.settings.local.php
 /web/sites/example.sites.php
@@ -71,6 +69,7 @@
 /.env
 # Ignore any node modules directories
 node_modules
+/themesrc/node_modules
 # Ignore any generated theme files
 /web/themes/custom/*/css/
 /web/themes/custom/*/fonts/icons

@@ -1,13 +1,15 @@
 {
-    "name": "drupal/recommended-project",
-    "description": "Project template for Drupal projects with a relocated document root",
+    "name": "seismicmike/memory-coding-challenge",
+    "description": "Coding Challenge to build an API backend for a memory game.",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "homepage": "https://www.drupal.org/project/drupal",
-    "support": {
-        "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
-        "chat": "https://www.drupal.org/node/314178"
-    },
+    "homepage": "https://github.com/seismicmike/memory-coding-challenge",
+    "authors": [
+        {
+            "name": "Michael Lewis",
+            "role": "Drupal Engineer"
+        }
+    ],
     "repositories": [
         {
             "type": "composer",
@@ -39,10 +41,22 @@
         },
         "sort-packages": true
     },
+    "scripts": {
+        "fix-nfs": "find . -type d > /dev/null",
+        "pre-install-cmd": [
+            "@fix-nfs"
+        ],
+        "pre-update-cmd": [
+            "@fix-nfs"
+        ]
+    },
     "extra": {
         "drupal-scaffold": {
+            "allowed-packages": [
+                "drupal/core"
+            ],
             "locations": {
-                "web-root": "web/"
+                "web-root": "./web"
             }
         },
         "installer-paths": {

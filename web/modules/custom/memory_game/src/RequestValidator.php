@@ -64,10 +64,10 @@ class RequestValidator implements RequestValidatorInterface {
     }
     // Rows and columns are going to come through as strings, so use a regular
     // expression validate that they contain integers in the range we want.
-    elseif (!preg_match('/^[1-6]$/', $rows)) {
+    elseif (!preg_match('/^0*?[1-6]$/', $rows)) {
       $this->validationResult = new AccessResultForbidden('`rows` must be a positive integer between 1 and 6.');
     }
-    elseif (!preg_match('/^[1-6]$/', $columns)) {
+    elseif (!preg_match('/^0*?[1-6]$/', $columns)) {
       $this->validationResult = new AccessResultForbidden('`columns` must be a positive integer between 1 and 6.');
     }
     // Make sure at least one of the inputs is an even number.

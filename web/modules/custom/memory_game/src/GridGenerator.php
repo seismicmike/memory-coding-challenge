@@ -16,14 +16,14 @@ class GridGenerator implements GridGeneratorInterface {
   /**
    * The request validator.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestValidatorInterface
+   * @var \Drupal\memory_game\RequestValidatorInterface
    */
   protected $requestValidator;
 
   /**
    * Create a GridGenerator.
    *
-   * @param \Symfony\Component\HttpFoundation\RequestValidatorInterface $request_validator
+   * @param \Drupal\memory_game\RequestValidatorInterface $request_validator
    *   The request validator to use to make sure the inputs are valid.
    */
   public function __construct(RequestValidatorInterface $request_validator) {

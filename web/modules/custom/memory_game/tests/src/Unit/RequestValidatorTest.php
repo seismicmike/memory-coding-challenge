@@ -80,6 +80,26 @@ class RequestValidatorTest extends UnitTestCase {
       'columns' => -7,
       'valid' => FALSE,
     ],
+    [
+      'rows' => 'squirrel',
+      'columns' => 'monkey',
+      'valid' => FALSE,
+    ],
+    [
+      'rows' => '1',
+      'columns' => '2',
+      'valid' => TRUE,
+    ],
+    [
+      'rows' => '5',
+      'columns' => '4',
+      'valid' => TRUE,
+    ],
+    [
+      'rows' => '2.5',
+      'columns' => '4',
+      'valid' => FALSE,
+    ],
   ];
 
   /**

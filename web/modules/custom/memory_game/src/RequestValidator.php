@@ -2,13 +2,17 @@
 
 namespace Drupal\memory_game;
 
+use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResultNeutral;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Service description.
  */
-class RequestValidator {
+class RequestValidator implements RequestValidatorInterface {
 
   /**
    * The request stack.
@@ -18,11 +22,11 @@ class RequestValidator {
   protected $requestStack;
 
   /**
-   * The error message from the most recent validation attempt.
+   * The result of the previous validation attempt.
    *
-   * @var string
+   * @var \Drupal\Core\Access\AccessResultInterface
    */
-  public $validationError = '';
+  protected $validationResult;
 
   /**
    * Constructs a RequestValidator object.
@@ -32,6 +36,7 @@ class RequestValidator {
    */
   public function __construct(RequestStack $request_stack) {
     $this->requestStack = $request_stack;
+    $this->validationResult = new AccessResultForbidden('No validation has been performed.');
   }
 
   /**
@@ -40,12 +45,8 @@ class RequestValidator {
    * @param ?\Symfony\Component\HttpFoundation\Request $request
    *   The request to validate. If none is provided, the current request
    *   will be used.
-   *
-   * @return bool
-   *   Whether to consider the request valid.
    */
-  public function validateRequest(Request $request = NULL): bool {
-    $this->validationError = '';
+  public function validateRequest(Request $request = NULL): self {
     if (!$request) {
       $request = $this->requestStack->getCurrentRequest();
     }
@@ -53,43 +54,70 @@ class RequestValidator {
     $rows = $request->query->get('rows');
     $columns = $request->query->get('columns');
 
-    if (empty($rows)) {
-      $this->validationError = '`rows` is required.';
-      return FALSE;
+    // Make sure we have a rows value.
+    if (is_null($rows)) {
+      $this->validationResult = new AccessResultForbidden('`rows` is required.');
     }
-
-    if (empty($columns)) {
-      $this->validationError = '`columns` is required.';
-      return FALSE;
+    // Make sure we have a columns value.
+    elseif (is_null($columns)) {
+      $this->validationResult = new AccessResultForbidden('`columns` is required.');
     }
-
-    // Make sure rows is a positive integer between 1 and 6.
-    if (!preg_match('/^[1-6]$/', $rows)) {
-      $this->validationError = '`rows` must be a positive integer between 1 and 6.';
-      return FALSE;
+    // Rows and columns are going to come through as strings, so use a regular
+    // expression validate that they contain integers in the range we want.
+    elseif (!preg_match('/^[1-6]$/', $rows)) {
+      $this->validationResult = new AccessResultForbidden('`rows` must be a positive integer between 1 and 6.');
     }
-
-    // Make sure columns is a positive integer between 1 and 6.
-    if (!preg_match('/^[1-6]$/', $columns)) {
-      $this->validationError = '`columns` must be a positive integer between 1 and 6.';
-      return FALSE;
+    elseif (!preg_match('/^[1-6]$/', $columns)) {
+      $this->validationResult = new AccessResultForbidden('`columns` must be a positive integer between 1 and 6.');
     }
-
-    if (($rows % 2 != 0) && ($columns % 2 != 0)) {
-      $this->validationError = 'Either `rows` or `columns` needs to be an even number.';
-      return FALSE;
+    // Make sure at least one of the inputs is an even number.
+    elseif (($rows % 2 != 0) && ($columns % 2 != 0)) {
+      $this->validationResult = new AccessResultForbidden('Either `rows` or `columns` needs to be an even number.');
     }
-
     // This is to catch an possible edge case just in case somehow we get past
     // the previous check while still being able to generate an odd number of
     // cards.
-    if (($rows * $columns) % 2 != 0) {
-      $this->validationError = 'Requested `rows` and `columns` would generate an odd number of cards.';
-      return FALSE;
+    elseif (($rows * $columns) % 2 != 0) {
+      $this->validationResult = new AccessResultForbidden('Requested `rows` and `columns` would generate an odd number of cards.');
+    }
+    // All checks pass. Set result to valid.
+    else {
+      $this->validationResult = new AccessResultNeutral();
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getValidationResult(): AccessResultInterface {
+    return $this->validationResult;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isValid(): bool {
+    if ($this->validationResult instanceof AccessResultNeutral || $this->validationResult instanceof AccessResultAllowed) {
+      return TRUE;
     }
 
-    // All checks pass. Return true.
-    return TRUE;
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccessResultMessage(): string {
+    $message = 'Request Invalid.';
+    if ($this->isValid()) {
+      $message = '';
+    }
+    elseif ($this->validationResult instanceof AccessResultForbidden) {
+      $message = $this->validationResult->getReason();
+    }
+
+    return $message;
   }
 
 }

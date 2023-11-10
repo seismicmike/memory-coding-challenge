@@ -4,6 +4,7 @@ namespace Drupal\Tests\memory_game\Unit;
 
 use Drupal\memory_game\RequestValidator;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\Api;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @group memory_game
  */
 class RequestValidatorTest extends UnitTestCase {
+  use MockApiRequestTrait;
+
   const CASES = [
     [
       'rows' => 2,
@@ -132,37 +135,6 @@ class RequestValidatorTest extends UnitTestCase {
   }
 
   /**
-   * Create a mock request.
-   *
-   * @param mixed $rows
-   *   The value to set for rows.
-   * @param mixed $columns
-   *   The value to set for columns.
-   *
-   * @return \Symfony\Component\HttpFoundation\Request
-   *   The request mock.
-   */
-  protected function mockRequest($rows, $columns): Request {
-    $mock_query = $this->createMock(ParameterBag::class);
-    $mock_query->expects($this->any())
-      ->method('get')
-      ->willReturnCallback(function ($parameter) use ($rows, $columns) {
-        if ($parameter === 'rows') {
-          return $rows;
-        }
-        elseif ($parameter === 'columns') {
-          return $columns;
-        }
-        // Handle other cases or return a default value.
-        return NULL;
-      });
-
-    $mock_request = $this->createMock(Request::class);
-    $mock_request->query = $mock_query;
-    return $mock_request;
-  }
-
-  /**
    * Tests something.
    */
   public function testThroughRequestStackService() {
@@ -170,9 +142,9 @@ class RequestValidatorTest extends UnitTestCase {
     foreach (self::CASES as $case) {
       // Test using the request stack service.
       $validator = $this->mockValidator($case['rows'], $case['columns']);
-      $result = $validator->validateRequest();
-      $message = $validator->validationError;
-      $this->assertEquals($case['valid'], $result, "Validation completed with message: $message");
+      $validator->validateRequest();
+      $message = $validator->getAccessResultMessage();
+      $this->assertEquals($case['valid'], $validator->isValid(), "Validation completed with message: $message");
     }
   }
 
@@ -185,9 +157,9 @@ class RequestValidatorTest extends UnitTestCase {
     foreach (self::CASES as $case) {
       // Test when passing a request object directly.
       $request = $this->mockRequest($case['rows'], $case['columns']);
-      $result = $validator->validateRequest($request);
-      $message = $validator->validationError;
-      $this->assertEquals($case['valid'], $result, "Validation completed with message: $message");
+      $validator->validateRequest($request);
+      $message = $validator->getAccessResultMessage();
+      $this->assertEquals($case['valid'], $validator->isValid(), "Validation completed with message: $message");
     }
   }
 

@@ -2,3 +2,6 @@ services:
   memory_game.request_validator:
     class: Drupal\memory_game\RequestValidator
     arguments: ['@request_stack']
+  memory_game.grid_generator:
+    class: Drupal\memory_game\GridGenerator
+    arguments: ['@memory_game.request_validator']
